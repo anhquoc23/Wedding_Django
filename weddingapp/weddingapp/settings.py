@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import cloudinary
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -134,4 +135,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #My Configuration
 APPEND_SLASH = True
 MEDIA_ROOT = '%s/wedding/static' % BASE_DIR
+
+# Cloudinary
+cloudinary.config(
+    cloud_name="dvevyvqyt",
+    api_key="595363456269972",
+    api_secret="qtQWMeNL6dcV1eM9ZLXEjJAMims"
+)
 

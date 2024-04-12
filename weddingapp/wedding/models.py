@@ -1,13 +1,16 @@
+import uuid
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from .errors import *
 from  .configs import *
+from cloudinary.models import CloudinaryField
 
 # Create your models here.
 
 # Base Model
 class BaseItem(models.Model):
-    id = models.UUIDField(primary_key = True)
+    id = models.UUIDField(primary_key = True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, null=False, unique=True, error_messages={
         'max_length': MAX_LENGTH,
         'unique': UNIQUE,
@@ -35,7 +38,7 @@ class BaseWeddingOrder(models.Model):
 
 # Models
 class User(AbstractUser):
-    avatar = models.ImageField(upload_to='wedding/avatar/')
+    avatar = CloudinaryField('avatar', null=True)
     is_active = models.BooleanField(default=True)
 
 
@@ -46,7 +49,7 @@ class User(AbstractUser):
         ordering = ['-id']
 
 class Category(models.Model):
-    id = models.UUIDField(primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, null=False, unique=True, error_messages={
         'max_length': MAX_LENGTH,
         'unique': UNIQUE,
@@ -61,7 +64,7 @@ class Category(models.Model):
         ordering = ['name']
 
 class WeddingHall(models.Model):
-    id = models.UUIDField(primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, null=False, unique=True, error_messages={
         'max_length': MAX_LENGTH,
         'unique': UNIQUE,
@@ -83,7 +86,7 @@ class WeddingHall(models.Model):
         'null': NULL_LABLE
     })
     is_active = models.BooleanField(default=False)
-    image = models.ImageField(upload_to='wedding/hall/')
+    image = CloudinaryField('hall', null=True)
 
     # Many To One
 
@@ -99,7 +102,7 @@ class Service(BaseItem):
         return self.name
 
 class Menu(BaseItem):
-    image = models.ImageField(upload_to='wedding/menu/')
+    image = CloudinaryField('menu', null=True)
 
     #Fogreinkey
     category = models.ForeignKey(Category, related_name='menus', on_delete=models.CASCADE)
@@ -127,6 +130,14 @@ class WeddingParty(models.Model):
 
     def __str__(self):
         return self.user.name + ' ' + self.wedding_hall.name + ' ' + self.order_date
+
+class Cancel(models.Model):
+    cancel_date = models.DateTimeField(auto_now_add=True)
+    employee_id = models.IntegerField(null=False)
+
+    #ForeignKey
+    wedding_party = models.ForeignKey(WeddingParty, related_name='wedding_party', on_delete=models.CASCADE)
+
 
 class WeddingMenu(BaseWeddingOrder):
 
