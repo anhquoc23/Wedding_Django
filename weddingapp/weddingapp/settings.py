@@ -39,10 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'wedding.apps.WeddingConfig',
-    'rest_framework',
-    'oauth2_provider',
     'ckeditor',
-    'ckeditor_uploader'
+    'ckeditor_uploader',
+    'oauth2_provider',
+    'rest_framework'
 ]
 
 REST_FRAMEWORK = {

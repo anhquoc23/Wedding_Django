@@ -4,6 +4,7 @@ from .models import *
 from django import forms
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from .utils import *
+from .configs import PASSWORD_EMPLOYEE
 
 # Custom Model Form
 class WeddingHallForm(forms.ModelForm):
@@ -17,12 +18,16 @@ class WeddingHallForm(forms.ModelForm):
 class UserAdmin(admin.ModelAdmin):
     list_display = ['id', 'username', 'first_name', 'last_name', 'date_joined', 'is_active']
     list_filter = ['id', 'username', 'first_name', 'last_name', 'date_joined', 'is_active']
-    readonly_fields = ['username', 'password', 'user_permissions']
+    readonly_fields = ['username', 'password', 'user_permissions', 'ava']
 
+    def ava(self, obj):
+        if obj:
+            return mark_safe('<img src="{url}" width="120" />'.format(url=obj.avatar.url))
     def save_model(self, request, obj, form, change):
         if change is False:
             obj.username = gerenate_username(obj.first_name, obj.last_name)
-            obj.set_password = obj.password
+            obj.password = PASSWORD_EMPLOYEE
+            obj.set_password(obj.password)
         obj.save()
         
 
@@ -49,6 +54,12 @@ class WeddingHallAdmin(admin.ModelAdmin):
             return mark_safe('<img src="{url}" width="120" />'.format(url=obj.image.url))
 
 
+class ServiceAdmin(admin.ModelAdmin):
+    list_display = ['name', 'unit_price', 'created_date', 'updated_date']
+    list_filter = ['name', 'unit_price', 'created_date']
+    search_fields = ['name', 'unit_price', 'created_date', 'updated_date']
+
+
 
 
 
@@ -56,5 +67,5 @@ class WeddingHallAdmin(admin.ModelAdmin):
 admin.site.register(User, UserAdmin)
 admin.site.register(Category)
 admin.site.register(Menu, MenuAdmin)
-admin.site.register(Service)
+admin.site.register(Service, ServiceAdmin)
 admin.site.register(WeddingHall, WeddingHallAdmin)
