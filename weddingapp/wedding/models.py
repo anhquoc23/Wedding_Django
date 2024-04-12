@@ -1,3 +1,4 @@
+from datetime import datetime
 import uuid
 
 from django.contrib.auth.models import AbstractUser
@@ -19,6 +20,8 @@ class BaseItem(models.Model):
     unit_price = models.DecimalField(decimal_places=2, null=False, error_messages={
         'null': NULL_LABLE
     }, max_digits=10)
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
