@@ -1,17 +1,31 @@
 from django.contrib import admin
-
 from django.utils.safestring import mark_safe
 from .models import *
 from django import forms
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
+from .utils import *
 
 # Custom Model Form
 class WeddingHallForm(forms.ModelForm):
     description = forms.CharField(widget=CKEditorUploadingWidget)
 
+
     class Meta:
         model = WeddingHall
         fields = '__all__'
+
+class UserAdmin(admin.ModelAdmin):
+    list_display = ['id', 'username', 'first_name', 'last_name', 'date_joined', 'is_active']
+    list_filter = ['id', 'username', 'first_name', 'last_name', 'date_joined', 'is_active']
+    readonly_fields = ['username', 'password', 'user_permissions']
+
+    def save_model(self, request, obj, form, change):
+        if change is False:
+            obj.username = gerenate_username(obj.first_name, obj.last_name)
+            obj.set_password = obj.password
+        obj.save()
+        
+
 # Custom Model Admin
 class MenuAdmin(admin.ModelAdmin):
     list_display = ['name', 'unit_price', 'created_date', 'updated_date']
@@ -39,7 +53,7 @@ class WeddingHallAdmin(admin.ModelAdmin):
 
 
 # Register your models here.
-admin.site.register(User)
+admin.site.register(User, UserAdmin)
 admin.site.register(Category)
 admin.site.register(Menu, MenuAdmin)
 admin.site.register(Service)
