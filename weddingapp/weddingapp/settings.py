@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'wedding.apps.WeddingConfig',
     'rest_framework',
-    'oauth2_provider'
+    'oauth2_provider',
+    'ckeditor',
+    'ckeditor_uploader'
 ]
 
 REST_FRAMEWORK = {
@@ -155,3 +157,5 @@ cloudinary.config(
 CLIENT_ID = 'mlxGinrkhw2faB4TqRss7duykFqrMfiTTnn2EiCQ'
 CLIENT_SECRET = 'MhB17AQbUeqd4kLH1WDZ2kFleBR7owqt636pKR5vpfnmEQi9TBn1WxZDwlsCsd7dUuoq8BVAxCBqIhgy7DCxv30QpeIPGlnc9JBMPGzRs5eryo8IkDX1t7D5e5YBXtZG'
 
+#CK-EDITOR
+CKEDITOR_UPLOAD_PATH = "ckeditor/halls/"

@@ -6,6 +6,7 @@ from django.db import models
 from .errors import *
 from  .configs import *
 from cloudinary.models import CloudinaryField
+from ckeditor import fields
 
 # Create your models here.
 
@@ -85,10 +86,10 @@ class WeddingHall(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     capacity = models.IntegerField(default=10)
-    description = models.TextField(null=False, error_messages={
+    description = fields.RichTextField(null=False, error_messages={
         'null': NULL_LABLE
     })
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     image = CloudinaryField('hall', null=True)
 
     # Many To One
