@@ -16,9 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
+from rest_framework import routers
+from wedding import views
+
+route = routers.DefaultRouter()
+route.register('menus', views.MenuViewSet, basename='menu')
+route.register('services', views.ServiceViewSet, basename='service')
 
 urlpatterns = [
+    path('api/', include(route.urls)),
     path('admin/', admin.site.urls),
     path('o/',include('oauth2_provider.urls', namespace='oauth2_provider')),
-    re_path(r'^ckeditor/', include('ckeditor_uploader.urls'))
+    re_path(r'^ckeditor/', include('ckeditor_uploader.urls')),
 ]
