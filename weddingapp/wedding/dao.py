@@ -1,3 +1,5 @@
+from django.contrib.auth.models import Group
+
 from .models import *
 
 # Model Menu
@@ -25,3 +27,11 @@ def get_services(dict:dict=None):
             price = float(dict['price'])
             query = query.filter(unit_price=price)
     return query
+
+# Model User
+def get_group_by_group_name(name):
+    query = Group.objects.get(name=name)
+    return query
+
+def get_users():
+    return User.objects.all()

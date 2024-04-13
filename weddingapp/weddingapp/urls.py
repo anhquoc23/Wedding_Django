@@ -22,6 +22,7 @@ from wedding import views
 route = routers.DefaultRouter()
 route.register('menus', views.MenuViewSet, basename='menu')
 route.register('services', views.ServiceViewSet, basename='service')
+route.register('users', views.UserViewSet, basename='user')
 
 urlpatterns = [
     path('api/', include(route.urls)),
