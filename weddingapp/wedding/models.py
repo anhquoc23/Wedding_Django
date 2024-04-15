@@ -140,7 +140,7 @@ class Cancel(models.Model):
     employee_id = models.IntegerField(null=False)
 
     #ForeignKey
-    wedding_party = models.ForeignKey(WeddingParty, related_name='wedding_party', on_delete=models.CASCADE)
+    wedding_party = models.OneToOneField(WeddingParty, on_delete=models.CASCADE, primary_key=True)
 
 
 class WeddingMenu(BaseWeddingOrder):

@@ -42,4 +42,7 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     def current_user(self, request):
         return Response(UserSerializer(request.user).data)
 
+class WeddingHallViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
+    queryset = get_wedding_party()
+    serializer_class = WeddingHallSerializer
 

@@ -23,6 +23,7 @@ route = routers.DefaultRouter()
 route.register('menus', views.MenuViewSet, basename='menu')
 route.register('services', views.ServiceViewSet, basename='service')
 route.register('users', views.UserViewSet, basename='user')
+route.register('wedding-hall', views.WeddingHallViewSet, basename='wedding-hall')
 
 urlpatterns = [
     path('api/', include(route.urls)),

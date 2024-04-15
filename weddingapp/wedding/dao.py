@@ -35,3 +35,8 @@ def get_group_by_group_name(name):
 
 def get_users():
     return User.objects.all()
+
+# Model WeddingParty
+def get_wedding_party(dict:dict=None):
+    query = WeddingHall.objects.filter(is_active=True)
+    return query

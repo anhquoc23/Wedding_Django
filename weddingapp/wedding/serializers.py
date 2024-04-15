@@ -41,3 +41,14 @@ class UserSerializer(serializers.ModelSerializer):
         if user.save():
             group.user_set.add(user)
         return user
+
+class WeddingHallSerializer(serializers.ModelSerializer):
+    img = serializers.SerializerMethodField()
+    class Meta:
+        model = WeddingHall
+        fields = ['id', 'name', 'description', 'created_date', 'updated_date', 'price_morning', 'price_afternoon',
+                  'price_evening', 'capacity', 'img']
+
+    def get_img(self, obj):
+        return f'{BASE_URL_CLOUDINARY}/{obj.image}'
+
