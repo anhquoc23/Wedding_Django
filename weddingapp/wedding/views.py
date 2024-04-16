@@ -46,3 +46,7 @@ class WeddingHallViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retrie
     queryset = get_wedding_party()
     serializer_class = WeddingHallSerializer
 
+class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
+    queryset = get_categories()
+    serializer_class = CategorySerializer
+

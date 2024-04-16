@@ -1,10 +1,18 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy
+from django.contrib.auth.models import Group
+
 from .models import *
 from django import forms
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from .utils import *
 from .configs import PASSWORD_EMPLOYEE
+
+# Custom Admin Site
+class WeddingAppAdminSite(admin.AdminSite):
+    site_header = 'Quản Lý Đặt Tiệc Cưới'
+    index_title = gettext_lazy('Trang Quản Trị Website')
 
 # Custom Model Form
 class WeddingHallForm(forms.ModelForm):
@@ -64,8 +72,11 @@ class ServiceAdmin(admin.ModelAdmin):
 
 
 # Register your models here.
-admin.site.register(User, UserAdmin)
-admin.site.register(Category)
-admin.site.register(Menu, MenuAdmin)
-admin.site.register(Service, ServiceAdmin)
-admin.site.register(WeddingHall, WeddingHallAdmin)
+administration_site = WeddingAppAdminSite()
+
+administration_site.register(User, UserAdmin)
+administration_site.register(Group)
+administration_site.register(Category)
+administration_site.register(Menu, MenuAdmin)
+administration_site.register(Service, ServiceAdmin)
+administration_site.register(WeddingHall, WeddingHallAdmin)

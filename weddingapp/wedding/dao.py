@@ -2,6 +2,10 @@ from django.contrib.auth.models import Group
 
 from .models import *
 
+# Model Category
+def get_categories():
+    return Category.objects.filter(is_active=True)
+
 # Model Menu
 def get_menus(dict:dict=None):
     query = Menu.objects.filter(is_active=True)

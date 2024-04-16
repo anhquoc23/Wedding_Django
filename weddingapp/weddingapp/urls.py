@@ -14,20 +14,43 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import debug_toolbar
 from django.contrib import admin
 from django.urls import path, include, re_path
-from rest_framework import routers
-from wedding import views
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import routers, permissions
+from wedding import views, admin
 
+# Url API
 route = routers.DefaultRouter()
 route.register('menus', views.MenuViewSet, basename='menu')
+route.register('catgories', views.CategoryViewSet, basename='category')
 route.register('services', views.ServiceViewSet, basename='service')
 route.register('users', views.UserViewSet, basename='user')
 route.register('wedding-hall', views.WeddingHallViewSet, basename='wedding-hall')
 
+# Swagger
+schema_view = get_schema_view(
+openapi.Info(
+    title="Course API",
+    default_version='v1',
+    description="APIs for CourseApp",
+    contact=openapi.Contact(email="thanh.dh@ou.edu.vn"),
+    license=openapi.License(name="Dương Hữu Thành@2021"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,)
+)
+
+
 urlpatterns = [
     path('api/', include(route.urls)),
-    path('admin/', admin.site.urls),
+    path('admin/', admin.administration_site.urls),
     path('o/',include('oauth2_provider.urls', namespace='oauth2_provider')),
     re_path(r'^ckeditor/', include('ckeditor_uploader.urls')),
+    path('__debug__', include(debug_toolbar.urls)),
+    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc')
 ]

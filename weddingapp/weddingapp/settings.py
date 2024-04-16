@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'oauth2_provider',
-    'rest_framework'
+    'rest_framework',
+    'debug_toolbar',
+    'drf_yasg'
 ]
 
 REST_FRAMEWORK = {
@@ -64,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
 ROOT_URLCONF = 'weddingapp.urls'
@@ -165,6 +168,8 @@ OAUTH2_PROVIDER = {
     'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore'
 }
 
-
 #CK-EDITOR
 CKEDITOR_UPLOAD_PATH = "ckeditor/halls/"
+
+# DEBUG TOOLBAR
+INTERNAL_IPS = ['127.0.0.1']
