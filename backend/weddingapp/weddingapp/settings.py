@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'oauth2_provider',
     'rest_framework',
     'debug_toolbar',
-    'drf_yasg'
+    'drf_yasg',
+    'corsheaders'
 ]
 
 REST_FRAMEWORK = {
@@ -66,7 +67,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware'
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 'weddingapp.urls'
@@ -173,3 +175,6 @@ CKEDITOR_UPLOAD_PATH = "ckeditor/halls/"
 
 # DEBUG TOOLBAR
 INTERNAL_IPS = ['127.0.0.1']
+
+# CORS
+CORS_ALLOW_ALL_ORIGINS = True

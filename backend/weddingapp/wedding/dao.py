@@ -37,10 +37,20 @@ def get_group_by_group_name(name):
     query = Group.objects.get(name=name)
     return query
 
+def change_password(user, current_password, new_password):
+    print(current_password, new_password)
+    if user.check_password(current_password):
+        print('true')
+        user.password = new_password
+        user.set_password(user.password)
+        user.save()
+        return True
+    return False
+
 def get_users():
     return User.objects.all()
 
-# Model WeddingParty
-def get_wedding_party(dict:dict=None):
+# Model WeddingHall
+def get_wedding_hall(dict:dict=None):
     query = WeddingHall.objects.filter(is_active=True)
     return query

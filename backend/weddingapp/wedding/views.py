@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import viewsets, generics, parsers, permissions
+from rest_framework import viewsets, generics, parsers, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -34,7 +34,7 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     serializer_class = UserSerializer
 
     def get_permissions(self):
-        if self.action.__eq__('current_user'):
+        if self.action.__eq__('current_user') or self.action.__eq__('change_password'):
             return [permissions.IsAuthenticated()]
         return  [permissions.AllowAny()]
 
@@ -42,8 +42,15 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     def current_user(self, request):
         return Response(UserSerializer(request.user).data)
 
+    @action(methods=['post'], url_path='change-password', url_name='change-password', detail=False)
+    def change_password(self, request):
+        print(request.user.username)
+        if change_password(request.user, request.data.get('current_password'), request.data.get('new_password')):
+            return Response('Change Password Is Successful', status=status.HTTP_200_OK)
+        return Response('Current PassWord is not true', status=status.HTTP_400_BAD_REQUEST)
+
 class WeddingHallViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
-    queryset = get_wedding_party()
+    queryset = get_wedding_hall()
     serializer_class = WeddingHallSerializer
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):

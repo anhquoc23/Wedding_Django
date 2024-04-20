@@ -45,7 +45,7 @@ openapi.Info(
 
 
 urlpatterns = [
-    path('api/', include(route.urls)),
+    path('', include(route.urls)),
     path('admin/', admin.administration_site.urls),
     path('o/',include('oauth2_provider.urls', namespace='oauth2_provider')),
     re_path(r'^ckeditor/', include('ckeditor_uploader.urls')),
