@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.views.generic import TemplateView
 from rest_framework import viewsets, generics, parsers, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -57,3 +58,12 @@ class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = get_categories()
     serializer_class = CategorySerializer
 
+
+class Test(TemplateView):
+    template_name = 'index.html'
+
+    def get(self, request):
+        current_user = request.user
+        return render(request, self.template_name, {
+            'current_user': current_user
+        })

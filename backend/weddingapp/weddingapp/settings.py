@@ -39,13 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'wedding.apps.WeddingConfig',
+    'social_django',
     'ckeditor',
     'ckeditor_uploader',
     'oauth2_provider',
     'rest_framework',
     'debug_toolbar',
     'drf_yasg',
-    'corsheaders'
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
@@ -68,7 +69,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'corsheaders.middleware.CorsMiddleware'
+    'corsheaders.middleware.CorsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware'
 ]
 
 ROOT_URLCONF = 'weddingapp.urls'
@@ -83,6 +85,8 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
                 'django.contrib.messages.context_processors.messages',
             ],
         },
@@ -156,6 +160,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 APPEND_SLASH = True
 MEDIA_ROOT = '%s/wedding/static' % BASE_DIR
 
+# HTTPS
+# SECURE_SSL_REDIRECT = True
+# CSRF_COOKIE_SECURE = True
+
 # Cloudinary
 cloudinary.config(
     cloud_name="dvevyvqyt",
@@ -178,3 +186,19 @@ INTERNAL_IPS = ['127.0.0.1']
 
 # CORS
 CORS_ALLOW_ALL_ORIGINS = True
+
+# SOCIAL AUTH
+# SOCIAL_AUTH_JSONFIELD_ENABLED = True
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.open_id.OpenIdAuth',
+    # 'social_core.backends.google.GoogleOpenId',
+    # 'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+# SOCIAL_AUTH_REQUIRE_POST = True
+
+# FaceBook
+SOCIAL_AUTH_FACEBOOK_KEY = '1335053693792928'
+SOCIAL_AUTH_FACEBOOK_SECRET = '74b51e0c157746868ebfebdb430b1dd9'
