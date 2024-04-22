@@ -24,6 +24,7 @@ class ServiceSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    avatar = serializers.ImageField()
 
     class Meta:
         extra_kwargs = {

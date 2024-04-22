@@ -33,6 +33,7 @@ class ServiceViewSet(viewsets.ViewSet, generics.ListAPIView):
 class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     queryset = get_users()
     serializer_class = UserSerializer
+    parser_classes = [parsers.MultiPartParser]
 
     def get_permissions(self):
         if self.action.__eq__('current_user') or self.action.__eq__('change_password'):
