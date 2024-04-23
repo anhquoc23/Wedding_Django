@@ -46,7 +46,6 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
 
     @action(methods=['post'], url_path='change-password', url_name='change-password', detail=False)
     def change_password(self, request):
-        print(request.user.username)
         if change_password(request.user, request.data.get('current_password'), request.data.get('new_password')):
             return Response('Change Password Is Successful', status=status.HTTP_200_OK)
         return Response('Current PassWord is not true', status=status.HTTP_400_BAD_REQUEST)
@@ -54,6 +53,9 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
 class WeddingHallViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     queryset = get_wedding_hall()
     serializer_class = WeddingHallSerializer
+
+    def get_queryset(self):
+        return get_wedding_hall(self.request.query_params)
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = get_categories()

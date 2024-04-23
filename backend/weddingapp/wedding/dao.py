@@ -53,4 +53,8 @@ def get_users():
 # Model WeddingHall
 def get_wedding_hall(dict:dict=None):
     query = WeddingHall.objects.filter(is_active=True)
+
+    if dict:
+        if 'name' in dict:
+            query = query.filter(name__icontains=dict['name'])
     return query
