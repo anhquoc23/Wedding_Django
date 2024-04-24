@@ -1,10 +1,16 @@
 from rest_framework.pagination import PageNumberPagination
 
-ESTATUS_WEDDINGPARTY = {
-    'PENDING': 'PENDING',
-    'COMPLETED': 'COMPLETED',
-    'REJECTED': 'REJECTED'
-}
+ESTATUS_WEDDINGPARTY = [
+    ('PENDING', 'PENDING'),
+    ('COMPLETED', 'COMPLETED'),
+    ('REJECTED', 'REJECTED')
+]
+
+SHIFT_PARTY = [
+    ('MORNING', 'MORNING'),
+    ('AFTERNOON', 'AFTERNOON'),
+    ('EVENING', 'EVENING')
+]
 
 PASSWORD_EMPLOYEE = '123456'
 

@@ -56,6 +56,8 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication'
     ),
 
 
@@ -184,6 +186,18 @@ CKEDITOR_UPLOAD_PATH = "ckeditor/halls/"
 
 # DEBUG TOOLBAR
 INTERNAL_IPS = ['127.0.0.1']
+
+# SWAGGER
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'access_token': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization'
+        }
+    },
+}
+
 
 # CORS
 CORS_ALLOW_ALL_ORIGINS = True

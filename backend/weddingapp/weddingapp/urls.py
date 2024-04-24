@@ -33,11 +33,11 @@ route.register('wedding-hall', views.WeddingHallViewSet, basename='wedding-hall'
 # Swagger
 schema_view = get_schema_view(
 openapi.Info(
-    title="Course API",
+    title="Wedding API",
     default_version='v1',
-    description="APIs for CourseApp",
-    contact=openapi.Contact(email="thanh.dh@ou.edu.vn"),
-    license=openapi.License(name="Dương Hữu Thành@2021"),
+    description="APIs for WeddingApp",
+    contact=openapi.Contact(email="2051052111@ou.edu.vn"),
+    license=openapi.License(name="Nguyễn Anh Quốc & Trần Văn Cương @ 2024"),
     ),
     public=True,
     permission_classes=(permissions.AllowAny,)

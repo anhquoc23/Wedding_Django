@@ -122,6 +122,8 @@ class WeddingParty(models.Model):
         'null': NULL_LABLE
     })
     status = models.CharField(choices=ESTATUS_WEDDINGPARTY, default='PENDING', max_length=255)
+    shift_party = models.CharField(choices=SHIFT_PARTY, max_length=255, default='MORNING')
+    is_weekend = models.BooleanField(default=False)
 
     # Many To One
     user = models.ForeignKey(User, related_name='party_users', on_delete=models.CASCADE)
@@ -149,7 +151,10 @@ class WeddingMenu(BaseWeddingOrder):
     menu = models.ForeignKey(Menu, related_name='weddingmenu_menus', on_delete=models.CASCADE)
     party = models.ForeignKey(WeddingParty, related_name='weddingmenu_parties', on_delete=models.CASCADE)
 
-class WeddingService(BaseWeddingOrder):
+class WeddingService(models.Model):
+    unit_price = models.DecimalField(decimal_places=2, null=False, error_messages={
+        'null': NULL_LABLE
+    }, max_digits=10)
 
     # Many To One
     service = models.ForeignKey(Service, related_name='weddingservice_services', on_delete=models.CASCADE)

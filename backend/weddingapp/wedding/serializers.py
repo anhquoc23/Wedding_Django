@@ -25,6 +25,8 @@ class ServiceSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     avatar = serializers.ImageField()
+    password = serializers.CharField(write_only=True, style={'input_type': 'password'})
+    confirm_password = serializers.CharField(write_only=True, style={'input_type': 'password'})
 
     class Meta:
         extra_kwargs = {
@@ -33,9 +35,21 @@ class UserSerializer(serializers.ModelSerializer):
             }
         }
         model = User
-        fields = ['first_name', 'last_name', 'email', 'username', 'password', 'avatar']
+        fields = ['first_name', 'last_name', 'email', 'username', 'password', 'avatar', 'confirm_password']
+
+    def validate(self, attrs):
+        password = attrs.get('password')
+        confirm_password = attrs.get('confirm_password')
+
+        if password.__eq__(confirm_password) is False:
+            raise serializers.ValidationError({
+                'password': 'Passwords do not match.'
+            })
+
+        return attrs
 
     def create(self, validated_data):
+        validated_data.pop('confirm_password', None)
         user = User(**validated_data.copy())
         user.set_password(user.password)
         group = get_group_by_group_name('CUSTOMER')
