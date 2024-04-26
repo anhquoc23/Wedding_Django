@@ -19,6 +19,9 @@ def get_menus(dict:dict=None):
             query = query.filter(category__id=dict['category_id'])
     return query
 
+def get_menu_by_id(id):
+    return Menu.objects.get(pk=id)
+
 
 
 # Model Service
@@ -31,6 +34,10 @@ def get_services(dict:dict=None):
             price = float(dict['price'])
             query = query.filter(unit_price=price)
     return query
+
+def get_service_by_id(id):
+    return Service.objects.get(pk=id)
+
 
 # Model User
 def get_group_by_group_name(name):
@@ -50,7 +57,18 @@ def change_password(user, current_password, new_password):
 def get_users():
     return User.objects.all()
 
+def edit_user(dict:dict, current_user:User):
+    user = current_user
+    user.first_name = dict['first_name']
+    user.last_name = dict['last_name']
+    user.email = dict['email']
+    user.avatar = dict['avatar']
+
+    user.save()
+    return user
+
 # Model WeddingHall
+
 def get_wedding_hall(dict:dict=None):
     query = WeddingHall.objects.filter(is_active=True)
 
@@ -58,3 +76,31 @@ def get_wedding_hall(dict:dict=None):
         if 'name' in dict:
             query = query.filter(name__icontains=dict['name'])
     return query
+
+def get_wedding_hall_by_id(id):
+    return WeddingHall.objects.get(pk=id)
+
+# Model Wedding Party
+def get_wedding_party():
+    return WeddingParty.objects.all()
+
+def add_wedding_party(dict:dict):
+    party = WeddingParty.objects.create(unit_price=dict['unit_price'], order_date=dict['order_date'],
+                                        wedding_hall=dict['wedding_hall'], user=dict['user'],
+                                        shift_party=dict['shift_party'], is_weekend=dict['is_weekend'])
+    return party
+
+
+#Model MenuParty
+def get_menu():
+    return Menu
+
+def add_menus_party(dict:dict):
+    menu = WeddingMenu.objects.create(unit_price=dict['unit_price'], quantity=dict['quantity'], party=dict['party'],
+                                      menu=dict['menu'])
+    return menu
+
+def add_service_party(dict:dict):
+    service = WeddingService.objects.create(unit_price=dict['unit_price'], party=dict['party'],
+                                            service=dict['service'])
+    return service

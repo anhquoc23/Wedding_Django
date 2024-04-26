@@ -126,7 +126,7 @@ class WeddingParty(models.Model):
     is_weekend = models.BooleanField(default=False)
 
     # Many To One
-    user = models.ForeignKey(User, related_name='party_users', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='party_users', on_delete=models.CASCADE, null=True)
     wedding_hall = models.ForeignKey(WeddingHall, related_name='party_halls', on_delete=models.CASCADE)
 
     # Many To Many

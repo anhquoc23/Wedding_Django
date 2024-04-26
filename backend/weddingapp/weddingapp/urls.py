@@ -29,6 +29,7 @@ route.register('catgories', views.CategoryViewSet, basename='category')
 route.register('services', views.ServiceViewSet, basename='service')
 route.register('users', views.UserViewSet, basename='user')
 route.register('wedding-hall', views.WeddingHallViewSet, basename='wedding-hall')
+# route.register('wedding-party', views.WeddingPartyViewSet.as_view(), basename='wedding-party')
 
 # Swagger
 schema_view = get_schema_view(
