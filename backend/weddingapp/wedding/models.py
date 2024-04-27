@@ -46,7 +46,6 @@ class User(AbstractUser):
     is_active = models.BooleanField(default=True)
 
 
-
     def __str__(self):
         return self.first_name + ' ' + self.last_name
     class Meta:
@@ -135,15 +134,18 @@ class WeddingParty(models.Model):
     users = models.ManyToManyField(User, related_name='party_feedback', through='Feedback')
 
     def __str__(self):
-        return self.user.name + ' ' + self.wedding_hall.name + ' ' + self.order_date
+        return self.user.username + ' ' + self.wedding_hall.name + ' ' + self.order_date.__str__()
 
 class Cancel(models.Model):
-    cancel_date = models.DateTimeField(auto_now_add=True)
-    employee_id = models.IntegerField(null=False)
+    cancel_date = models.DateTimeField(auto_now_add=True, null=True)
+    # employee_id = models.IntegerField(null=False)
 
     #ForeignKey
     wedding_party = models.OneToOneField(WeddingParty, on_delete=models.CASCADE, primary_key=True)
+    employee = models.ForeignKey(User, related_name='cancel_employees', on_delete=models.CASCADE, null=True)
 
+    def __str__(self):
+        return f'Wedding Party is cancled by {self.employee.first_name} {self.employee.last_name} + {self.cancel_date.__str__()}'
 
 class WeddingMenu(BaseWeddingOrder):
 

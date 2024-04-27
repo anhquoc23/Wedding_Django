@@ -98,4 +98,12 @@ class WeddingPartySerializer(serializers.ModelSerializer):
         model = WeddingParty
         exclude = ['users']
 
+class CancelSerializer(serializers.ModelSerializer):
+    employee = UserSerializer()
+    wedding_party = WeddingPartySerializer()
+
+    class Meta:
+        model = Cancel
+        fields = '__all__'
+
 

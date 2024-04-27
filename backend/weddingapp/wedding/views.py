@@ -3,11 +3,13 @@ from django.views.generic import TemplateView
 from rest_framework import viewsets, generics, parsers, permissions, status, views
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from .perm import AuthenticateIsEmployeeORADMIN
 
 from .serializers import *
 from .models import *
 from .dao import *
 from .configs import Paginator
+from .utils import *
 
 # Create your views here.
 # Api Menu
@@ -80,7 +82,7 @@ class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
     serializer_class = CategorySerializer
 
 
-class WeddingPartyViewSet(views.APIView):
+class WeddingPartyAPIView(views.APIView):
     queryset = get_wedding_party()
     # serializer_class = WeddingPartySerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -125,6 +127,26 @@ class WeddingPartyViewSet(views.APIView):
 
         return Response(serializers.data, status=status.HTTP_201_CREATED)
 
+    # @action(methods=['post'], det)
+
+class WeddingPartyViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
+    queryset = get_wedding_party()
+    serializer_class = WeddingPartySerializer
+    permission_classes = [AuthenticateIsEmployeeORADMIN]
+
+    @action(methods=['post'], url_path='status', url_name='status', detail=True)
+    def change_status(self, req, pk):
+        status_party = self.request.data.get('status')
+        party = self.get_object()
+        if party:
+            if status_party == 'REJECTED':
+                cancel = add_cancle(party, req.user)
+                return Response(CancelSerializer(cancel).data, status=status.HTTP_200_OK)
+            party = change_wedding_party_status(party, status_party)
+            return Response(WeddingPartySerializer(party).data, status=status.HTTP_200_OK)
+        return Response({
+            'Error': 'status is not valid. Its must be REJECTED OR COMPLETED'
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 
 

@@ -1,6 +1,8 @@
 from django.contrib.auth.models import Group
 
 from .models import *
+from .utils import *
+
 
 # Model Category
 def get_categories():
@@ -43,6 +45,9 @@ def get_service_by_id(id):
 def get_group_by_group_name(name):
     query = Group.objects.get(name=name)
     return query
+
+def get_groups_by_user(user:User):
+    return user.groups.all()
 
 def change_password(user, current_password, new_password):
     print(current_password, new_password)
@@ -90,6 +95,15 @@ def add_wedding_party(dict:dict):
                                         shift_party=dict['shift_party'], is_weekend=dict['is_weekend'])
     return party
 
+def change_wedding_party_status(party:WeddingParty, status):
+    s = get_value_choice(ESTATUS_WEDDINGPARTY, status)
+    if s:
+        party.status = s
+
+        party.save()
+        return party
+    return None
+
 
 #Model MenuParty
 def get_menu():
@@ -104,3 +118,7 @@ def add_service_party(dict:dict):
     service = WeddingService.objects.create(unit_price=dict['unit_price'], party=dict['party'],
                                             service=dict['service'])
     return service
+
+# Model Cancel
+def add_cancle(party: WeddingParty, employee_id):
+    return Cancel.objects.create(wedding_party=party, employee=employee_id)

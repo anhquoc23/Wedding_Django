@@ -67,6 +67,14 @@ class ServiceAdmin(admin.ModelAdmin):
     list_filter = ['name', 'unit_price', 'created_date']
     search_fields = ['name', 'unit_price', 'created_date', 'updated_date']
 
+class CancelAdmin(admin.ModelAdmin):
+    readonly_fields = ["wedding_party", "cancel_date", "employee"]
+    list_filter = ["cancel_date", 'employee']
+    search_fields = ("employee__first_name", "employee__last_name")
+
+    def has_add_permission(self, request):
+        return False
+
 
 
 
@@ -80,3 +88,4 @@ administration_site.register(Category)
 administration_site.register(Menu, MenuAdmin)
 administration_site.register(Service, ServiceAdmin)
 administration_site.register(WeddingHall, WeddingHallAdmin)
+administration_site.register(Cancel, CancelAdmin)
