@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.template.response import TemplateResponse
+from django.urls import path
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy
 from django.contrib.auth.models import Group
@@ -8,11 +10,42 @@ from django import forms
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from .utils import *
 from .configs import PASSWORD_EMPLOYEE
+from .dao import *
+
 
 # Custom Admin Site
 class WeddingAppAdminSite(admin.AdminSite):
     site_header = 'Quản Lý Đặt Tiệc Cưới'
     index_title = gettext_lazy('Trang Quản Trị Website')
+
+    def get_urls(self):
+        return [
+            path('stats', self.stat_view)
+        ] + super().get_urls()
+
+    def stat_view(self, req):
+
+        revenue = None
+        if req.method.__eq__('GET'):
+            date = datetime.now()
+            type = 'MONTH'
+
+            if req.GET.get('date-stat') and req.GET.get('type'):
+                date = datetime.strptime(req.GET.get('date-stat'), '%Y-%m-%d')
+                type = req.GET.get('type')
+            year = date.year
+
+            match type:
+                case 'MONTH':
+                    revenue = revenue_by_month(year)
+                case 'YEAR':
+                    revenue = revenue_by_year()
+                case _:
+                    revenue = revenue_by_quarter(year)
+            # print(date.year)
+        return TemplateResponse(request=req, template='admin/stats.html', context={
+            'revenue': revenue
+        })
 
 # Custom Model Form
 class WeddingHallForm(forms.ModelForm):

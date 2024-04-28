@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 from rest_framework import viewsets, generics, parsers, permissions, status, views
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .perm import AuthenticateIsEmployeeORADMIN
+from .perm import AuthenticateIsEmployeeORADMIN, AuthenticateIsCustomer
 
 from .serializers import *
 from .models import *
@@ -129,12 +129,12 @@ class WeddingPartyAPIView(views.APIView):
 
     # @action(methods=['post'], det)
 
+
 class WeddingPartyViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     queryset = get_wedding_party()
     serializer_class = WeddingPartySerializer
-    permission_classes = [AuthenticateIsEmployeeORADMIN]
 
-    @action(methods=['post'], url_path='status', url_name='status', detail=True)
+    @action(methods=['post'], url_path='status', url_name='status', detail=True, permission_classes=[AuthenticateIsEmployeeORADMIN])
     def change_status(self, req, pk):
         status_party = self.request.data.get('status')
         party = self.get_object()
@@ -148,7 +148,14 @@ class WeddingPartyViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retri
             'Error': 'status is not valid. Its must be REJECTED OR COMPLETED'
         }, status=status.HTTP_400_BAD_REQUEST)
 
-
+    @action(methods=['post'], url_path='feedbacks', url_name='feedbacks', detail=True,
+            permission_classes=[AuthenticateIsCustomer])
+    def add_feedback(self, req, pk):
+        party = self.get_object()
+        hall = self.request.data.get('wedding_hall_id')
+        wedding_hall = get_wedding_hall_by_id(hall)
+        feedback = add_feedback(content=self.request.data.get('content'), wedding_party=party, wedding_hall=wedding_hall, user=req.user)
+        return Response(FeedBackSerializer(feedback).data, status.HTTP_201_CREATED)
 
 class Test(TemplateView):
     template_name = 'index.html'

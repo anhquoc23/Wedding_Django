@@ -53,9 +53,11 @@ class UserSerializer(serializers.ModelSerializer):
         user = User(**validated_data.copy())
         user.set_password(user.password)
         group = get_group_by_group_name('CUSTOMER')
-        if user.save():
-            group.user_set.add(user)
+        user.save()
+        user.groups.add(group)
+        user.save()
         return user
+
 
 class ChangePasswordSerializer(serializers.Serializer):
     current_password = serializers.CharField(write_only=True, style={'input_type': 'password'})
@@ -106,4 +108,12 @@ class CancelSerializer(serializers.ModelSerializer):
         model = Cancel
         fields = '__all__'
 
+class FeedBackSerializer(serializers.ModelSerializer):
+    hall = WeddingHallSerializer()
+    user = UserSerializer()
+    party = WeddingPartySerializer()
+
+    class Meta:
+        model = FeedBack
+        fields = '__all__'
 

@@ -1,4 +1,6 @@
 from django.contrib.auth.models import Group
+from django.db.models import Sum, F
+from django.db.models.functions import ExtractMonth, ExtractYear, ExtractQuarter
 
 from .models import *
 from .utils import *
@@ -122,3 +124,40 @@ def add_service_party(dict:dict):
 # Model Cancel
 def add_cancle(party: WeddingParty, employee_id):
     return Cancel.objects.create(wedding_party=party, employee=employee_id)
+
+
+# Model Feedback
+def add_feedback(content:str, wedding_party:WeddingParty, wedding_hall:WeddingHall, user:User):
+    return FeedBack.objects.create(content=content, hall=wedding_hall, user=user, party=wedding_party)
+
+
+# Stat
+def revenue_by_year():
+    query = WeddingParty.objects\
+        .annotate(year=ExtractYear('order_date'))\
+        .annotate(revenue_party=Sum('unit_price'))\
+        .annotate(revenue_menu=Sum(F('weddingmenu_parties__unit_price') * F('weddingmenu_parties__quantity')))\
+        .annotate(revenue=Sum('weddingservice__unit_price'))\
+        .values('year', 'revenue')
+
+    return query
+
+def revenue_by_month(year):
+    query = WeddingParty.objects.filter(order_date__year=year) \
+        .annotate(month=ExtractMonth('order_date')).values('month') \
+        .annotate(revenue_party=Sum('unit_price')) \
+        .annotate(revenue_menu=Sum(F('weddingmenu_parties__unit_price') * F('weddingmenu_parties__quantity'))) \
+        .annotate(revenue=Sum('weddingservice_parties__unit_price')) \
+        .values('month', 'revenue').order_by('month')
+
+    return query
+
+def revenue_by_quarter(year):
+    query = WeddingParty.objects.filter(order_date__year=year) \
+        .annotate(quarter=ExtractQuarter('order_date')) \
+        .annotate(revenue_party=Sum('unit_price')) \
+        .annotate(revenue_menu=Sum(F('weddingmenu_parties__unit_price') * F('weddingmenu_parties__quantity'))) \
+        .annotate(revenue=Sum('weddingservice_parties__unit_price')) \
+        .values('quarter', 'revenue')
+
+    return query
