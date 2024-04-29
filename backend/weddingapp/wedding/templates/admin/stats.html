@@ -35,12 +35,24 @@
 
     fieldset {
         border: 1px #b3d7ff solid;
-    margin-top: 28px;
+    margin-top: 32px;
     padding: 10px;
     margin-bottom: 10px;
     width: 70%;
     margin-left: 18px;
     }
+
+    #chart > div {
+        width: 60%;
+        height: 500px;
+        margin: 60px auto;
+    }
+
+    #footer {
+        margin-bottom: 0;
+    }
+
+
 </style>
 
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
@@ -59,53 +71,116 @@
 </nav>
 
 <section id="form-filter">
-
+    <div class="alert alert-info" mt-3>Lọc thống kê</div>
     <fieldset>
-            <legend>Lọc...</legend>
-    <form class="container-fluid">
+        <legend>Lọc...</legend>
+        <form class="container-fluid">
 
 
             <div class="row">
-            <div class="form-floating mb-3 mt-3 col-3">
-                <input type="date" required class="form-control" id="date-stat" name="date-stat">
-            </div>
+                <div class="form-floating mb-3 mt-3 col-3">
+                    <input type="date" required class="form-control" id="date-stat" name="date-stat">
+                </div>
                 <div class="col-1"></div>
-            <div class="form-floating mb-3 mt-3 col-3">
-                <select class="form-select select-box" name="type">
-                    <option selected value="MONTH">Tháng</option>
-                    <option value="QUARTER">Quý</option>
-                    <option value="YEAR">Năm</option>
-                </select>
-            </div>
+                <div class="form-floating mb-3 mt-3 col-3">
+                    <select id="type" class="form-select select-box" name="type">
+                        <option selected value="MONTH">Tháng</option>
+                        <option value="QUARTER">Quý</option>
+                        <option value="YEAR">Năm</option>
+                    </select>
+                </div>
                 <div class="col-2"></div>
-            <div class="col-3 mt-3">
-                <input class="btn btn-primary btn-submit" type="submit" value="Lọc"/>
+                <div class="col-3 mt-3">
+                    <input class="btn btn-primary btn-submit" type="submit" value="Lọc"/>
+                </div>
             </div>
-        </div>
 
-    </form>
-        </fieldset>
+        </form>
+    </fieldset>
 </section>
-
 <section id="chart">
-    <table class="Table">
-        <thead>
-        <th>Title</th>
-        <th>Value</th>
-        </thead>
-        <tbody>
-        {% for r in revenue %}
-        <tr>
-            <td>{{ r.month }}</td>
-            <td>{{ r.revenue }}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <h5 class="alert alert-info mt-3">Doanh Thu</h5>
+    <div>
+        <canvas id="revenue-chart"></canvas>
+    </div>
+    <h5 class="alert alert-info mt-3">Mật độ tiệc cưới</h5>
+    <div>
+        <canvas id="density-chart"></canvas>
+    </div>
 </section>
 
-<div class="alert alert-primary">
+<div class="alert alert-primary" id="footer">
     Nguyễn Anh Quốc &copy; 2024
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+        window.onload = () => {
+             // Chart revenue
+
+             let date = {{ date }}
+             let type = "{{ type }}"
+             let lableRevene = 'Thống Kê doanh thu'
+
+             switch (type) {
+    case 'MONTH':
+        lableRevene += ` theo từng tháng trong năm ${date}`
+        break;
+    case 'QUARTER':
+        lableRevene += ` theo từng quý trong năm ${date}`
+        break;
+    default:
+        lableRevene += ` của toàn bộ năm`
+        break;
+}
+
+             let [titlesRevenue, valuesRevenue] = [[], []]
+
+             {% for item in revenue %}
+                titlesRevenue.push({{item.title}})
+                valuesRevenue.push({{item.value}})
+             {% endfor %}
+
+            const revenueCtx = document.getElementById('revenue-chart')
+
+            new Chart(revenueCtx, {
+                type: 'bar',
+                data: {
+                    labels: titlesRevenue,
+                    datasets: [{
+                        label: '#' + lableRevene,
+                        data: valuesRevenue,
+                        borderWidth: 1
+                    }]
+                }
+            })
+
+            // Chart Density
+
+             let [titlesDensity, valuesDensity] = [[], []]
+
+             {% for item in density %}
+                titlesDensity.push({{item.title}})
+                valuesDensity.push({{item.value}})
+             {% endfor %}
+
+            const densityCtx = document.getElementById('density-chart')
+
+            new Chart(densityCtx, {
+                type: 'pie',
+                data: {
+                    labels: titlesDensity,
+                    datasets: [{
+                        label: lableRevene,
+                        data: valuesDensity,
+                        borderWidth: 1
+                    }]
+                }
+            })
+        }
+
+
+</script>
 </body>
+
 </html>

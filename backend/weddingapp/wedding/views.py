@@ -157,6 +157,14 @@ class WeddingPartyViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retri
         feedback = add_feedback(content=self.request.data.get('content'), wedding_party=party, wedding_hall=wedding_hall, user=req.user)
         return Response(FeedBackSerializer(feedback).data, status.HTTP_201_CREATED)
 
+
+class FeedBackViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView):
+    serializer_class = FeedBackSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = get_feedbacks()
+
+
+
 class Test(TemplateView):
     template_name = 'index.html'
 

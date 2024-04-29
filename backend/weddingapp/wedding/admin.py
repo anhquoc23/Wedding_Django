@@ -25,7 +25,7 @@ class WeddingAppAdminSite(admin.AdminSite):
 
     def stat_view(self, req):
 
-        revenue = None
+        revenue, density = None, None
         if req.method.__eq__('GET'):
             date = datetime.now()
             type = 'MONTH'
@@ -38,13 +38,19 @@ class WeddingAppAdminSite(admin.AdminSite):
             match type:
                 case 'MONTH':
                     revenue = revenue_by_month(year)
+                    density = density_wedding_by_month(year)
                 case 'YEAR':
                     revenue = revenue_by_year()
+                    density = density_wedding_by_year()
                 case _:
                     revenue = revenue_by_quarter(year)
+                    density = density_wedding_by_quarter(year)
             # print(date.year)
         return TemplateResponse(request=req, template='admin/stats.html', context={
-            'revenue': revenue
+            'revenue': revenue,
+            'density': density,
+            'date': date.year,
+            'type': type
         })
 
 # Custom Model Form
