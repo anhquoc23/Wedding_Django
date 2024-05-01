@@ -77,6 +77,14 @@ class WeddingHallViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retrie
     def get_queryset(self):
         return get_wedding_hall(self.request.query_params)
 
+
+    @action(methods=['get'], url_path='feedbacks', url_name='feedbacks', detail=True)
+    def get_feedback(self, req, pk):
+        hall = self.get_object()
+
+        feedbacks = get_feedback_by_hall(hall)
+        return Response(FeedBackSerializer(feedbacks).data, status=status.HTTP_200_OK)
+
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = get_categories()
     serializer_class = CategorySerializer
@@ -148,7 +156,7 @@ class WeddingPartyViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retri
             'Error': 'status is not valid. Its must be REJECTED OR COMPLETED'
         }, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(methods=['post'], url_path='feedbacks', url_name='feedbacks', detail=True,
+    @action(methods=['post'], url_path='feedback', url_name='feedback', detail=True,
             permission_classes=[AuthenticateIsCustomer])
     def add_feedback(self, req, pk):
         party = self.get_object()
@@ -158,10 +166,10 @@ class WeddingPartyViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retri
         return Response(FeedBackSerializer(feedback).data, status.HTTP_201_CREATED)
 
 
-class FeedBackViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView):
-    serializer_class = FeedBackSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    queryset = get_feedbacks()
+# class FeedBackViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView):
+#     serializer_class = FeedBackSerializer
+#     permission_classes = [permissions.IsAuthenticated]
+#     queryset = get_feedbacks()
 
 
 

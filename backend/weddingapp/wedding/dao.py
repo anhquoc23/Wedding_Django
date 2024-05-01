@@ -136,6 +136,9 @@ def get_feedbacks():
 def get_feedbacks_by_party(party):
     return FeedBack.objects.filter(party=party)
 
+def get_feedback_by_hall(hall):
+    return FeedBack.objects.filter(hall=hall)
+
 
 # Stat
 def revenue_by_year():
