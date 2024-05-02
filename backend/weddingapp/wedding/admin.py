@@ -69,7 +69,7 @@ class UserAdmin(admin.ModelAdmin):
 
     def ava(self, obj):
         if obj:
-            return mark_safe('<img src="{url}" width="120" />'.format(url=obj.avatar.url))
+            return mark_safe('<img src="/static/{url}" width="120" />'.format(url=obj.avatar.name))
     def save_model(self, request, obj, form, change):
         if change is False:
             obj.username = gerenate_username(obj.first_name, obj.last_name)
@@ -81,7 +81,7 @@ class UserAdmin(admin.ModelAdmin):
 # Custom Model Admin
 class MenuAdmin(admin.ModelAdmin):
     list_display = ['name', 'unit_price', 'created_date', 'updated_date']
-    list_filter = ['name', 'unit_price']
+    list_filter = ['name', 'unit_price', 'category']
     search_fields = ['name', 'unit_price', 'created_date', 'updated_date']
     readonly_fields = ['menu']
 

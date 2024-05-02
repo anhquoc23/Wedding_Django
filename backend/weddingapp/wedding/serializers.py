@@ -25,6 +25,7 @@ class ServiceSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     avatar = serializers.ImageField()
+    ava = serializers.SerializerMethodField(source='avatar')
 
     class Meta:
         extra_kwargs = {
@@ -33,7 +34,14 @@ class UserSerializer(serializers.ModelSerializer):
             }
         }
         model = User
-        fields = ['first_name', 'last_name', 'email', 'username', 'password', 'avatar']
+        fields = ['first_name', 'last_name', 'email', 'username', 'password', 'avatar', 'ava']
+
+    def get_ava(self, obj):
+        req = self.context.get('request')
+        if obj.avatar:
+            if req:
+                return req.build_absolute_uri('/static/%s' % obj.avatar.name)
+            return '/static/%s' % obj.avatar.name
 
     def create(self, validated_data):
         user = User(**validated_data.copy())
