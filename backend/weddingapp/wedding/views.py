@@ -56,18 +56,13 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     @action(methods=['put'], url_path='edit', url_name='edit', detail=False,
             serializer_class=EditUserSerializer, parser_classes=[parsers.MultiPartParser])
     def edit(self, req):
-        serializer = self.get_serializer(data=req.data)
-        if serializer.is_valid():
-            dict = {
-                'first_name': serializer.validated_data['first_name'],
-                'last_name': serializer.validated_data['last_name'],
-                'email': serializer.validated_data['email'],
-                'avatar': serializer.validated_data['avatar']
-            }
-
-            user = edit_user(dict, current_user=req.user)
+        try:
+            serializer = self.get_serializer(data=req.data)
+            serializer.is_valid(raise_exception=True)
+            user = edit_user(serializer.validated_data, current_user=req.user)
             return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
-        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+        except ValidationError as errors:
+            return Response(errors.detail, status=status.HTTP_400_BAD_REQUEST)
 
 
 class WeddingHallViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):

@@ -69,7 +69,7 @@ class UserAdmin(admin.ModelAdmin):
 
     def ava(self, obj):
         if obj:
-            return mark_safe('<img src="/static/{url}" width="120" />'.format(url=obj.avatar.name))
+            return mark_safe('<img src="{url}" width="120" />'.format(url=obj.avatar.url))
     def save_model(self, request, obj, form, change):
         if change is False:
             obj.username = gerenate_username(obj.first_name, obj.last_name)

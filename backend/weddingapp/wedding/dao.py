@@ -69,7 +69,8 @@ def edit_user(dict:dict, current_user:User):
     user.first_name = dict['first_name']
     user.last_name = dict['last_name']
     user.email = dict['email']
-    user.avatar = dict['avatar']
+    if 'avatar' in dict:
+        user.avatar = dict['avatar']
 
     user.save()
     return user

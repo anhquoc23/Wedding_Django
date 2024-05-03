@@ -1,4 +1,8 @@
+import re
+
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
 from .models import *
 from .configs import *
 from .dao import *
@@ -25,7 +29,7 @@ class ServiceSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     avatar = serializers.ImageField()
-    ava = serializers.SerializerMethodField(source='avatar')
+    image = serializers.SerializerMethodField(source='avatar')
 
     class Meta:
         extra_kwargs = {
@@ -34,14 +38,10 @@ class UserSerializer(serializers.ModelSerializer):
             }
         }
         model = User
-        fields = ['first_name', 'last_name', 'email', 'username', 'password', 'avatar', 'ava']
+        fields = ['first_name', 'last_name', 'email', 'username', 'password', 'avatar', 'image']
 
-    def get_ava(self, obj):
-        req = self.context.get('request')
-        if obj.avatar:
-            if req:
-                return req.build_absolute_uri('/static/%s' % obj.avatar.name)
-            return '/static/%s' % obj.avatar.name
+    def get_image(self, obj):
+        return f'{BASE_URL_CLOUDINARY}/{obj.avatar}'
 
     def create(self, validated_data):
         user = User(**validated_data.copy())
@@ -61,7 +61,7 @@ class EditUserSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=255)
     last_name = serializers.CharField(max_length=255)
     email = serializers.EmailField()
-    avatar = serializers.ImageField()
+    avatar = serializers.ImageField(required=False, allow_null=True)
 
 class WeddingHallSerializer(serializers.ModelSerializer):
     img = serializers.SerializerMethodField()

@@ -45,7 +45,7 @@ class BaseWeddingOrder(models.Model):
 # Models
 class User(AbstractUser):
     # avatar = CloudinaryField('avatar', null=True)
-    avatar = ImageField(upload_to='wedding/user', null=True)
+    avatar = CloudinaryField('avatar', null=True)
     is_active = models.BooleanField(default=True)
 
 
