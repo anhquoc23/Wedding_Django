@@ -121,16 +121,20 @@
              let date = {{ date }}
              let type = "{{ type }}"
              let lableRevene = 'Thống Kê doanh thu'
+             let lableDensity = 'Thống Kê mật độ tiệc cưới'
 
              switch (type) {
     case 'MONTH':
         lableRevene += ` theo từng tháng trong năm ${date}`
+        lableDensity += ` theo từng tháng trong năm ${date}`
         break;
     case 'QUARTER':
         lableRevene += ` theo từng quý trong năm ${date}`
+        lableDensity += ` theo từng quý trong năm ${date}`
         break;
     default:
         lableRevene += ` của toàn bộ năm`
+        lableDensity += ` của toàn bộ năm`
         break;
 }
 
@@ -167,11 +171,11 @@
             const densityCtx = document.getElementById('density-chart')
 
             new Chart(densityCtx, {
-                type: 'pie',
+                type: 'bar',
                 data: {
                     labels: titlesDensity,
                     datasets: [{
-                        label: lableRevene,
+                        label: lableDensity,
                         data: valuesDensity,
                         borderWidth: 1
                     }]

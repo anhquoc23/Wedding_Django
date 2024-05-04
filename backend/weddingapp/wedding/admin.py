@@ -54,13 +54,13 @@ class WeddingAppAdminSite(admin.AdminSite):
         })
 
 # Custom Model Form
-class WeddingHallForm(forms.ModelForm):
-    description = forms.CharField(widget=CKEditorUploadingWidget)
-
-
-    class Meta:
-        model = WeddingHall
-        fields = '__all__'
+# class WeddingHallForm(forms.ModelForm):
+#     description = forms.CharField(widget=CKEditorUploadingWidget)
+#
+#
+#     class Meta:
+#         model = WeddingHall
+#         fields = '__all__'
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ['id', 'username', 'first_name', 'last_name', 'date_joined', 'is_active']
@@ -90,7 +90,7 @@ class MenuAdmin(admin.ModelAdmin):
             return mark_safe('<img src="{url}" width="120" />'.format(url=obj.image.url))
 
 class WeddingHallAdmin(admin.ModelAdmin):
-    form = WeddingHallForm
+    # form = WeddingHallForm
     list_display = ['name', 'price_morning', 'price_afternoon', 'price_evening', 'capacity']
     search_fields = ['name', 'price_morning', 'price_afternoon', 'price_evening', 'capacity']
     list_filter = ('name', 'price_morning', 'price_afternoon', 'price_evening', 'capacity')
