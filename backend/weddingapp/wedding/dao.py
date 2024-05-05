@@ -89,8 +89,16 @@ def get_wedding_hall_by_id(id):
     return WeddingHall.objects.get(pk=id)
 
 # Model Wedding Party
-def get_wedding_party():
-    return WeddingParty.objects.all()
+def get_wedding_party(dict:dict=None):
+    query = WeddingParty.objects.all()
+    if dict:
+        if 'status' in dict:
+            query = query.filter(status=dict['status'])
+
+    return query
+
+def get_wedding_party_by_current_user(user, status='PENDING'):
+    return WeddingParty.objects.filter(user=user, status=status)
 
 def add_wedding_party(dict:dict):
     party = WeddingParty.objects.create(unit_price=dict['unit_price'], order_date=dict['order_date'],
@@ -107,6 +115,14 @@ def change_wedding_party_status(party:WeddingParty, status):
         return party
     return None
 
+def get_total_party(party):
+    wedding_party = WeddingParty.objects.get(pk=party.id)
+    price_menu = WeddingMenu.objects.filter(party__id=party.id).aggregate(total=Sum(F('unit_price') * F('quantity')))
+    price_menu = 0 if price_menu['total'] is None else price_menu['total']
+    price_service = WeddingService.objects.filter(party__id=party.id).aggregate(total=Sum(F('unit_price')))
+    price_service = 0 if price_service['total'] is None else price_service['total']
+    return wedding_party.unit_price + price_menu+ price_service
+
 
 #Model MenuParty
 def get_menu():
@@ -117,10 +133,18 @@ def add_menus_party(dict:dict):
                                       menu=dict['menu'])
     return menu
 
+def get_menu_by_party(party):
+    return WeddingMenu.objects.filter(party=party)
+
+
+# Model ServiceParty
 def add_service_party(dict:dict):
     service = WeddingService.objects.create(unit_price=dict['unit_price'], party=dict['party'],
                                             service=dict['service'])
     return service
+
+def get_service_by_party(party):
+    return WeddingService.objects.filter(party=party)
 
 # Model Cancel
 def add_cancle(party: WeddingParty, employee_id):

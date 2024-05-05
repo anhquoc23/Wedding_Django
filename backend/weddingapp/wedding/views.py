@@ -69,6 +69,8 @@ class WeddingHallViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retrie
     queryset = get_wedding_hall()
     serializer_class = WeddingHallSerializer
 
+
+
     def get_queryset(self):
         return get_wedding_hall(self.request.query_params)
 
@@ -79,6 +81,8 @@ class WeddingHallViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retrie
 
         feedbacks = get_feedback_by_hall(hall)
         return Response(FeedBackSerializer(feedbacks).data, status=status.HTTP_200_OK)
+
+
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = get_categories()
@@ -137,6 +141,11 @@ class WeddingPartyViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retri
     queryset = get_wedding_party()
     serializer_class = WeddingPartySerializer
 
+    def get_permissions(self):
+        if self.action.__eq__('history'):
+            return [permissions.IsAuthenticated()]
+        return [permissions.AllowAny()]
+
     @action(methods=['post'], url_path='status', url_name='status', detail=True, permission_classes=[AuthenticateIsEmployeeORADMIN])
     def change_status(self, req, pk):
         status_party = self.request.data.get('status')
@@ -159,6 +168,11 @@ class WeddingPartyViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retri
         wedding_hall = get_wedding_hall_by_id(hall)
         feedback = add_feedback(content=self.request.data.get('content'), wedding_party=party, wedding_hall=wedding_hall, user=req.user)
         return Response(FeedBackSerializer(feedback).data, status.HTTP_201_CREATED)
+
+    @action(methods=['get'], url_path='history', url_name='history', detail=False)
+    def history(self, req):
+        serializer = get_wedding_party_by_current_user(req.user, self.request.data['status'])
+        return Response(WeddingPartySerializer(serializer, many=True).data, status=status.HTTP_200_OK)
 
 
 # class FeedBackViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView):

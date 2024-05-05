@@ -3,6 +3,7 @@ import re
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+# from weddingapp.wedding.serializers import ServicePartySerializer
 from .models import *
 from .configs import *
 from .dao import *
@@ -67,17 +68,18 @@ class WeddingHallSerializer(serializers.ModelSerializer):
     img = serializers.SerializerMethodField()
     class Meta:
         model = WeddingHall
-        fields = ['id', 'name', 'description', 'created_date', 'updated_date', 'price_morning', 'price_afternoon',
+        fields = ['id', 'name', 'description_text', 'created_date', 'updated_date', 'price_morning', 'price_afternoon',
                   'price_evening', 'capacity', 'img']
 
     def get_img(self, obj):
         return f'{BASE_URL_CLOUDINARY}/{obj.image}'
 
 class MenuPartySerializer(serializers.ModelSerializer):
+    menu_name = serializers.CharField(source='menu.name', read_only=True)
 
     class Meta:
         model = WeddingMenu
-        fields = '__all__'
+        fields = ['id', 'unit_price', 'quantity', 'menu_name']
 
 class ServicePartySerializer(serializers.ModelSerializer):
 
@@ -86,13 +88,24 @@ class ServicePartySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class WeddingPartySerializer(serializers.ModelSerializer):
-    menus = MenuSerializer(many=True)
-    services = ServiceSerializer(many=True)
+    total = serializers.SerializerMethodField()
     wedding_hall = WeddingHallSerializer()
+    menu_items = serializers.SerializerMethodField()
+    service_items = serializers.SerializerMethodField()
+
+
+    def get_menu_items(self, obj):
+        return MenuPartySerializer(get_menu_by_party(obj), many=True).data
+
+    def get_service_items(self, obj):
+        return ServicePartySerializer(get_service_by_party(obj), many=True).data
+
+    def get_total(self, obj):
+        return get_total_party(obj)
 
     class Meta:
         model = WeddingParty
-        exclude = ['users']
+        fields = ['id', 'unit_price', 'menu_items', 'service_items', 'wedding_hall', 'total']
 
 class CancelSerializer(serializers.ModelSerializer):
     employee = UserSerializer()
