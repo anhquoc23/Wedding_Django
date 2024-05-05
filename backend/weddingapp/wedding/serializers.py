@@ -105,7 +105,7 @@ class WeddingPartySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WeddingParty
-        fields = ['id', 'unit_price', 'menu_items', 'service_items', 'wedding_hall', 'total']
+        fields = ['id', 'unit_price', 'created_date', 'order_date', 'menu_items', 'service_items', 'wedding_hall', 'total']
 
 class CancelSerializer(serializers.ModelSerializer):
     employee = UserSerializer()

@@ -25,3 +25,6 @@ GROUP_NAME = {
 
 class Paginator(PageNumberPagination):
     page_size = 20
+
+class Paginator_5(PageNumberPagination):
+    page_size = 5

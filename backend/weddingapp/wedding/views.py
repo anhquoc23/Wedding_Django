@@ -68,6 +68,7 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
 class WeddingHallViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     queryset = get_wedding_hall()
     serializer_class = WeddingHallSerializer
+    pagination_class = Paginator_5
 
 
 
