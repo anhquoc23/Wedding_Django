@@ -22,7 +22,7 @@ class MenuViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIVi
         return get_menus(self.request.query_params)
 
 # APi Service
-class ServiceViewSet(viewsets.ViewSet, generics.ListAPIView):
+class ServiceViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     queryset = get_services()
     serializer_class = ServiceSerializer
     pagination_class = Paginator
@@ -174,6 +174,16 @@ class WeddingPartyViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retri
     def history(self, req):
         serializer = get_wedding_party_by_current_user(req.user, self.request.data['status'])
         return Response(WeddingPartySerializer(serializer, many=True).data, status=status.HTTP_200_OK)
+
+    @action(methods=['get'], url_path='list-date', url_name='list-date', detail=False)
+    def list_date(self, req):
+        wedding_hall = get_wedding_hall_by_id(self.request.data['hall'])
+        return Response(get_list_date_by_wedding_hall(wedding_hall), status=status.HTTP_200_OK)
+        # hall_id = req.GET.get('hall', None)
+        # if hall_id:
+        #     wedding_hall = get_wedding_hall_by_id(hall_id)
+        #     return Response(get_list_date_by_wedding_hall(wedding_hall), status=status.HTTP_200_OK)
+        # return Response({'error': 'ERROR'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # class FeedBackViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView):

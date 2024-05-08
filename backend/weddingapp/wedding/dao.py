@@ -101,6 +101,7 @@ def get_wedding_party_by_current_user(user, status='PENDING'):
     return WeddingParty.objects.filter(user=user, status=status)
 
 def add_wedding_party(dict:dict):
+    dict['unit_price'] = dict['unit_price'] if dict['is_weekeend'] is False else dict['unit_price'] * INCREASE_PRICE
     party = WeddingParty.objects.create(unit_price=dict['unit_price'], order_date=dict['order_date'],
                                         wedding_hall=dict['wedding_hall'], user=dict['user'],
                                         shift_party=dict['shift_party'], is_weekend=dict['is_weekend'])
@@ -122,6 +123,10 @@ def get_total_party(party):
     price_service = WeddingService.objects.filter(party__id=party.id).aggregate(total=Sum(F('unit_price')))
     price_service = 0 if price_service['total'] is None else price_service['total']
     return wedding_party.unit_price + price_menu+ price_service
+
+
+def get_list_date_by_wedding_hall(wedding_hall):
+    return WeddingParty.objects.filter(wedding_hall=wedding_hall, order_date__gt=datetime.now()).values('order_date')
 
 
 #Model MenuParty

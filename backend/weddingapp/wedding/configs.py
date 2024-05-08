@@ -22,6 +22,8 @@ GROUP_NAME = {
     'CUSTOMER': 'CUSTOMER'
 }
 
+INCREASE_PRICE = 1.5
+
 
 class Paginator(PageNumberPagination):
     page_size = 20
