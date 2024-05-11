@@ -38,7 +38,8 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     parser_classes = [parsers.MultiPartParser]
 
     def get_permissions(self):
-        if self.action.__eq__('current_user') or self.action.__eq__('change_password') or self.action.__eq__('edit'):
+        if self.action.__eq__('current_user') or self.action.__eq__('change_password') or self.action.__eq__('edit')\
+                or self.action.__eq__('get_role'):
             return [permissions.IsAuthenticated()]
         return [permissions.AllowAny()]
 
@@ -63,6 +64,11 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
             return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
         except ValidationError as errors:
             return Response(errors.detail, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['get'], url_path='role', url_name='role', detail=False)
+    def get_role(self, req):
+        queryset = get_group_by_user(req.user)
+        return Response(queryset.name, status=status.HTTP_200_OK)
 
 
 class WeddingHallViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
@@ -141,10 +147,11 @@ class WeddingPartyAPIView(views.APIView):
 class WeddingPartyViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
     queryset = get_wedding_party()
     serializer_class = WeddingPartySerializer
-
     def get_permissions(self):
         if self.action.__eq__('history'):
             return [permissions.IsAuthenticated()]
+        elif self.action.__eq__('list_history'):
+            return [AuthenticateIsEmployeeORADMIN()]
         return [permissions.AllowAny()]
 
     @action(methods=['post'], url_path='status', url_name='status', detail=True, permission_classes=[AuthenticateIsEmployeeORADMIN])
@@ -172,24 +179,50 @@ class WeddingPartyViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retri
 
     @action(methods=['get'], url_path='history', url_name='history', detail=False)
     def history(self, req):
-        serializer = get_wedding_party_by_current_user(req.user, self.request.data['status'])
+        serializer = get_wedding_party_by_current_user(req.user, self.request.query_params['status'])
         return Response(WeddingPartySerializer(serializer, many=True).data, status=status.HTTP_200_OK)
 
     @action(methods=['get'], url_path='list-date', url_name='list-date', detail=False)
     def list_date(self, req):
-        wedding_hall = get_wedding_hall_by_id(self.request.data['hall'])
-        return Response(get_list_date_by_wedding_hall(wedding_hall), status=status.HTTP_200_OK)
-        # hall_id = req.GET.get('hall', None)
-        # if hall_id:
-        #     wedding_hall = get_wedding_hall_by_id(hall_id)
-        #     return Response(get_list_date_by_wedding_hall(wedding_hall), status=status.HTTP_200_OK)
-        # return Response({'error': 'ERROR'}, status=status.HTTP_400_BAD_REQUEST)
+        hall_id = req.GET.get('hall', None)
+        if hall_id:
+            wedding_hall = get_wedding_hall_by_id(hall_id)
+            return Response(get_list_date_by_wedding_hall(wedding_hall), status=status.HTTP_200_OK)
+        return Response({'error': 'ERROR'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['get'], url_name='list-history', url_path='list-history', detail=False)
+    def list_history(self, req):
+        status_ = req.GET.get('status', None)
+        if status_:
+            return Response(WeddingPartySerializer(get_wedding_party_for_employee(status_), many=True).data, status=status.HTTP_200_OK)
+        return Response({'error': 'Khong tim thay query'}, status=status.HTTP_200_OK)
 
 
-# class FeedBackViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView):
-#     serializer_class = FeedBackSerializer
-#     permission_classes = [permissions.IsAuthenticated]
-#     queryset = get_feedbacks()
+class FeedBackViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):
+    serializer_class = FeedBackSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = get_feedbacks()
+
+    @action(methods=['get'], url_path='party', url_name='party', detail=False)
+    def get_feedback_party(self, req):
+        party_id = req.GET.get('party', None)
+        if party_id:
+            party = get_party_by_id(int(party_id))
+            query = get_feedbacks_by_party(party)
+            if query:
+                return Response(FeedBackSerializer(query).data, status=status.HTTP_200_OK)
+            return Response('Chưa có bình luận', status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'ERROR'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['get'], url_path='hall', url_name='hall', detail=False)
+    def get_feedback_hall(self, req):
+        hall_id = req.GET.get('hall', None)
+        if hall_id:
+            hall = get_wedding_hall_by_id(hall_id)
+            query = get_feedback_by_hall(hall)
+
+            return Response(FeedBackSerializer(query, many=True).data, status=status.HTTP_200_OK)
+        return Response({'error': 'ERROR'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

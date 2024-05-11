@@ -51,6 +51,9 @@ def get_group_by_group_name(name):
 def get_groups_by_user(user:User):
     return user.groups.all()
 
+def get_group_by_user(user:User):
+    return user.groups.all().first()
+
 def change_password(user, current_password, new_password):
     print(current_password, new_password)
     if user.check_password(current_password):
@@ -97,6 +100,9 @@ def get_wedding_party(dict:dict=None):
 
     return query
 
+def get_party_by_id(id):
+    return WeddingParty.objects.get(pk=id)
+
 def get_wedding_party_by_current_user(user, status='PENDING'):
     return WeddingParty.objects.filter(user=user, status=status)
 
@@ -127,6 +133,9 @@ def get_total_party(party):
 
 def get_list_date_by_wedding_hall(wedding_hall):
     return WeddingParty.objects.filter(wedding_hall=wedding_hall, order_date__gt=datetime.now()).values('order_date')
+
+def get_wedding_party_for_employee(status='PENDING'):
+    return WeddingParty.objects.filter(status=status).order_by('order_date')
 
 
 #Model MenuParty
@@ -164,7 +173,10 @@ def get_feedbacks():
     return FeedBack.objects.all()
 
 def get_feedbacks_by_party(party):
-    return FeedBack.objects.filter(party=party)
+    query = FeedBack.objects.filter(party=party).first()
+    if query:
+        return query
+    return None
 
 def get_feedback_by_hall(hall):
     return FeedBack.objects.filter(hall=hall)

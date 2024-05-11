@@ -15,3 +15,4 @@ class AuthenticateIsCustomer(IsAuthenticated):
     def has_permission(self, request, view):
         groups_all = [group.name for group in get_groups_by_user(request.user)]
         return any(group == GROUP_NAME['CUSTOMER'] for group in groups_all)
+

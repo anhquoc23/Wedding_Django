@@ -76,10 +76,14 @@ class WeddingHallSerializer(serializers.ModelSerializer):
 
 class MenuPartySerializer(serializers.ModelSerializer):
     menu_name = serializers.CharField(source='menu.name', read_only=True)
+    img = serializers.SerializerMethodField()
 
     class Meta:
         model = WeddingMenu
-        fields = ['id', 'unit_price', 'quantity', 'menu_name']
+        fields = ['id', 'unit_price', 'quantity', 'menu_name', 'img']
+
+    def get_img(self, obj):
+        return f'{BASE_URL_CLOUDINARY}/{obj.menu.image}'
 
 class ServicePartySerializer(serializers.ModelSerializer):
 
