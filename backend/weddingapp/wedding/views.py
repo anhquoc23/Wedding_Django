@@ -94,6 +94,7 @@ class WeddingHallViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retrie
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = get_categories()
     serializer_class = CategorySerializer
+    permission_classes = [AuthenticateIsEmployeeORADMIN]
 
 
 class WeddingPartyAPIView(views.APIView):
@@ -161,6 +162,7 @@ class WeddingPartyViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retri
         if party:
             if status_party == 'REJECTED':
                 cancel = add_cancle(party, req.user)
+                party = change_wedding_party_status(party, status_party)
                 return Response(CancelSerializer(cancel).data, status=status.HTTP_200_OK)
             party = change_wedding_party_status(party, status_party)
             return Response(WeddingPartySerializer(party).data, status=status.HTTP_200_OK)
@@ -196,6 +198,10 @@ class WeddingPartyViewSet(viewsets.ViewSet, generics.ListAPIView, generics.Retri
         if status_:
             return Response(WeddingPartySerializer(get_wedding_party_for_employee(status_), many=True).data, status=status.HTTP_200_OK)
         return Response({'error': 'Khong tim thay query'}, status=status.HTTP_200_OK)
+
+class CancelViewSet(viewsets.ViewSet, generics.ListAPIView):
+    queryset = get_cancles()
+    serializer_class = CancelSerializer
 
 
 class FeedBackViewSet(viewsets.ViewSet, generics.ListAPIView, generics.RetrieveAPIView):

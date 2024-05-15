@@ -165,6 +165,9 @@ def add_cancle(party: WeddingParty, employee_id):
     return Cancel.objects.create(wedding_party=party, employee=employee_id)
 
 
+def get_cancles():
+    return Cancel.objects.all()
+
 # Model Feedback
 def add_feedback(content:str, wedding_party:WeddingParty, wedding_hall:WeddingHall, user:User):
     return FeedBack.objects.create(content=content, hall=wedding_hall, user=user, party=wedding_party)
